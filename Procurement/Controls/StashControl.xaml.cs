@@ -217,7 +217,7 @@ namespace Procurement.Controls
             return b;
         }
 
-        enum Stat
+        public enum Stat
         {
             Life,
             EnergyShield,
@@ -225,6 +225,7 @@ namespace Procurement.Controls
             Strength,
             Dexterity,
             Intelligence,
+            TotalStats,
             Resistance,
             Accuracy,
             MovementSpeed,
@@ -264,12 +265,18 @@ namespace Procurement.Controls
             new ParseData{ stat = Stat.EnergyShield, regex = new Regex(@"\+([0-9]+) to maximum Energy Shield$") },
             new ParseData{ stat = Stat.EnergyShieldMult, regex = new Regex(@"([0-9]+)% increased Energy Shield$") },
             new ParseData{ stat = Stat.Strength, regex = new Regex(@"\+([0-9]+) to Strength$") },
+            new ParseData{ stat = Stat.TotalStats, regex = new Regex(@"\+([0-9]+) to Strength$") },
             new ParseData{ stat = Stat.Dexterity, regex = new Regex(@"\+([0-9]+) to Dexterity$") },
+            new ParseData{ stat = Stat.TotalStats, regex = new Regex(@"\+([0-9]+) to Dexterity$") },
             new ParseData{ stat = Stat.Intelligence, regex = new Regex(@"\+([0-9]+) to Intelligence$") },
+            new ParseData{ stat = Stat.TotalStats, regex = new Regex(@"\+([0-9]+) to Intelligence$") },
             new ParseData{ stat = Stat.Resistance, regex = new Regex(@"\+([0-9]+)% to Fire Resistance$") },
             new ParseData{ stat = Stat.Resistance, regex = new Regex(@"\+([0-9]+)% to Cold Resistance$") },
             new ParseData{ stat = Stat.Resistance, regex = new Regex(@"\+([0-9]+)% to Lightning Resistance$") },
             new ParseData{ stat = Stat.Resistance, regex = new Regex(@"\+([0-9]+)% to Chaos Resistance$") },
+            new ParseData{ stat = Stat.Resistance, regex = new Regex(@"\+([0-9]+)% to all Elemental Resistances$") },
+            new ParseData{ stat = Stat.Resistance, regex = new Regex(@"\+([0-9]+)% to all Elemental Resistances$") },
+            new ParseData{ stat = Stat.Resistance, regex = new Regex(@"\+([0-9]+)% to all Elemental Resistances$") },
             new ParseData{ stat = Stat.Accuracy, regex = new Regex(@"\+([0-9]+) to Accuracy Rating$") },
             new ParseData{ stat = Stat.MovementSpeed, regex = new Regex(@"([0-9]+)% increased Movement Speed$") },
             new ParseData{ stat = Stat.AttackSpeed, regex = new Regex(@"([0-9]+)% increased Attack Speed$") },
@@ -301,14 +308,18 @@ namespace Procurement.Controls
         {
             if (item is Gear && (item as Gear).Rarity != Rarity.Normal && (item as Gear).Explicitmods == null)
             {
-                childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#80801D"));
+                childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#000000"));
+            }
+            else if (item is Gear && (item as Gear).Rarity == Rarity.Unique)
+            {
+                childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffffff"));
             }
             else
             {
                 childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
 
                 var gear = item as Gear;
-                if (gear != null && gear.GearType != GearType.Jewel && !(gear.GearType == GearType.Amulet && gear.Rarity != Rarity.Magic) && gear.Rarity != Rarity.Unique)
+                if (gear != null && gear.GearType != GearType.Jewel && gear.Rarity != Rarity.Unique)
                 {
                     Dictionary<Stat, float> values = new Dictionary<Stat, float>();
                     
@@ -358,165 +369,194 @@ namespace Procurement.Controls
                         {
                             values[Stat.Life] = 0;
                         }
-                        values[Stat.Strength] += values.TryGetValue(Stat.Life) / 2;
+                        values[Stat.Life] += values.TryGetValue(Stat.Strength) / 2;
                     }
+
+                    float validations = 0;
+                    bool seen = false;
 
                     childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#88001D"));
-                    if (gear.GearType == GearType.Chest && (
-                        values.TryGetValue(Stat.Life) >= 60 ||
-                        values.TryGetValue(Stat.EnergyShield) >= 500 ||
-                        (values.TryGetValue(Stat.Life) >= 50 && values.TryGetValue(Stat.EnergyShield) >= 300) ||
-                        values.TryGetValue(Stat.Strength) >= 30 ||
-                        values.TryGetValue(Stat.Intelligence) >= 30 ||
-                        values.TryGetValue(Stat.Resistance) >= 60))
+                    if (gear.GearType == GearType.Chest)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.Life, 75);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 575);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 350, Stat.Life, 65);
+                        validations += values.CalculateValidations(Stat.Strength, 40);
+                        validations += values.CalculateValidations(Stat.Intelligence, 40);
+                        validations += values.CalculateValidations(Stat.Resistance, 80);
                     }
 
-                    if (gear.GearType == GearType.Helmet && (
-                        values.TryGetValue(Stat.Life) >= 50 ||
-                        values.TryGetValue(Stat.EnergyShield) >= 250 ||
-                        (values.TryGetValue(Stat.Life) >= 40 && values.TryGetValue(Stat.EnergyShield) >= 175) ||
-                        values.TryGetValue(Stat.Accuracy) >= 250 ||
-                        values.TryGetValue(Stat.Intelligence) >= 30 ||
-                        values.TryGetValue(Stat.Resistance) >= 60))
+                    if (gear.GearType == GearType.Helmet)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.Life, 65);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 300);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 200, Stat.Life, 55);
+                        validations += values.CalculateValidations(Stat.Accuracy, 300);
+                        validations += values.CalculateValidations(Stat.Intelligence, 40);
+                        validations += values.CalculateValidations(Stat.Resistance, 80);
                     }
 
-                    if (gear.GearType == GearType.Boots && (
-                        values.TryGetValue(Stat.MovementSpeed) >= 20 ||
-                        values.TryGetValue(Stat.Life) >= 50 ||
-                        values.TryGetValue(Stat.EnergyShield) >= 100 ||
-                        (values.TryGetValue(Stat.Life) >= 40 && values.TryGetValue(Stat.EnergyShield) >= 75) ||
-                        values.TryGetValue(Stat.Strength) >= 30 ||
-                        values.TryGetValue(Stat.Intelligence) >= 30 ||
-                        values.TryGetValue(Stat.Resistance) >= 60))
+                    if (gear.GearType == GearType.Boots)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.MovementSpeed, 20);
+                        validations += values.CalculateValidations(Stat.Life, 65);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 130);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 90, Stat.Life, 55);
+                        validations += values.CalculateValidations(Stat.Strength, 40);
+                        validations += values.CalculateValidations(Stat.Intelligence, 40);
+                        validations += values.CalculateValidations(Stat.Resistance, 70);
                     }
 
-                    if (gear.GearType == GearType.Shield && (
-                        values.TryGetValue(Stat.Life) >= 60 ||
-                        values.TryGetValue(Stat.EnergyShield) >= 250 ||
-                        (values.TryGetValue(Stat.Life) >= 50 && values.TryGetValue(Stat.EnergyShield) >= 220) ||
-                        values.TryGetValue(Stat.Resistance) >= 80 ||
-                        values.TryGetValue(Stat.Strength) >= 30 ||
-                        values.TryGetValue(Stat.Intelligence) >= 30 ||
-                        values.TryGetValue(Stat.SpellDamage) >= 40 ||
-                        values.TryGetValue(Stat.SpellCritChance) >= 60 ||
-                        false))
+                    if (gear.GearType == GearType.Gloves)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.Life, 65);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 150);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 100, Stat.Life, 55);
+                        validations += values.CalculateValidations(Stat.Resistance, 80);
+                        validations += values.CalculateValidations(Stat.Accuracy, 300);
+                        validations += values.CalculateValidations(Stat.AttackSpeed, 10);
+                        validations += values.CalculateValidations(Stat.Dexterity, 40);
                     }
 
-                    if ((gear.GearType == GearType.Sword || gear.GearType == GearType.Axe || gear.GearType == GearType.Mace || gear.GearType == GearType.Bow) && (
-                        values.TryGetValue(Stat.PhysicalDamageMult) >= 130 ||
-                        values.TryGetValue(Stat.PhysicalDamageAdd) >= 25 ||
-                        values.TryGetValue(Stat.AttackSpeed) >= 15 ||
-                        (gear.GearType == GearType.Bow && values.TryGetValue(Stat.CritChance) >= 20) ||
-                        (gear.GearType == GearType.Bow && values.TryGetValue(Stat.CritMult) >= 20) ||
-                        values.TryGetValue(Stat.GemLevel) >= 2 ||
-                        values.TryGetValue(Stat.FireDamageAttack) >= 50 ||
-                        values.TryGetValue(Stat.ColdDamageAttack) >= 50 ||
-                        values.TryGetValue(Stat.LightningDamageAttack) >= 90 ||
-                        false))
+                    if (gear.GearType == GearType.Shield)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.Life, 80);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 350);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 280, Stat.Life, 70);
+                        validations += values.CalculateValidations(Stat.Resistance, 100);
+                        validations += values.CalculateValidations(Stat.Strength, 35);
+                        validations += values.CalculateValidations(Stat.Intelligence, 35);
+                        validations += values.CalculateValidations(Stat.SpellDamage, 55);
+                        validations += values.CalculateValidations(Stat.SpellCritChance, 80);
                     }
 
-                    if ((gear.GearType == GearType.Dagger || gear.GearType == GearType.Wand || gear.GearType == GearType.Sceptre) && (
-                        values.TryGetValue(Stat.SpellDamage) >= 75 ||
-                        values.TryGetValue(Stat.SpellCritChance) >= 90 ||
-                        values.TryGetValue(Stat.FireDamageSpell) >= 40 ||
-                        values.TryGetValue(Stat.ColdDamageSpell) >= 40 ||
-                        values.TryGetValue(Stat.LightningDamageSpell) >= 70 ||
-                        values.TryGetValue(Stat.CritMult) >= 20 ||
-
-                        values.TryGetValue(Stat.PhysicalDamageMult) >= 130 ||
-                        values.TryGetValue(Stat.PhysicalDamageAdd) >= 25 ||
-                        (values.TryGetValue(Stat.AttackSpeed) >= 15 && gear.GearType == GearType.Dagger) ||
-                        (values.TryGetValue(Stat.AttackSpeed) >= 8 && gear.GearType == GearType.Wand) ||
-                        values.TryGetValue(Stat.CritChance) >= 20 ||
-                        values.TryGetValue(Stat.CritMult) >= 20 ||
-                        values.TryGetValue(Stat.FireDamageAttack) >= 50 ||
-                        values.TryGetValue(Stat.ColdDamageAttack) >= 50 ||
-                        values.TryGetValue(Stat.LightningDamageAttack) >= 90 ||
-                        false))
+                    if (gear.GearType == GearType.Sword || gear.GearType == GearType.Axe || gear.GearType == GearType.Mace || gear.GearType == GearType.Bow)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.PhysicalDamageMult, 170);
+                        validations += values.CalculateValidations(Stat.PhysicalDamageAdd, 33);
+                        validations += values.CalculateValidations(Stat.AttackSpeed, 20);
+                        if (gear.GearType == GearType.Bow)
+                        {
+                            validations += values.CalculateValidations(Stat.CritChance, 30);
+                            validations += values.CalculateValidations(Stat.CritMult, 30);
+                        }
+                        validations += values.CalculateValidations(Stat.GemLevel, 2);
+
+                        validations += values.CalculateValidations(Stat.FireDamageAttack, 70);
+                        validations += values.CalculateValidations(Stat.ColdDamageAttack, 70);
+                        validations += values.CalculateValidations(Stat.LightningDamageAttack, 120);
+                        validations += values.CalculateValidations(Stat.AttackSpeed, 20);
                     }
 
-                    if (gear.GearType == GearType.Staff && (
-                        values.TryGetValue(Stat.GemLevel) >= 2 ||
-                        values.TryGetValue(Stat.FireDamageSpell) >= 50 ||
-                        values.TryGetValue(Stat.ColdDamageSpell) >= 50 ||
-                        values.TryGetValue(Stat.LightningDamageSpell) >= 100 ||
-                        values.TryGetValue(Stat.SpellDamage) >= 75 ||
-                        false))
+                    if (gear.GearType == GearType.Dagger || gear.GearType == GearType.Wand || gear.GearType == GearType.Sceptre || gear.GearType == GearType.Claw)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.SpellDamage, 90);
+                        validations += values.CalculateValidations(Stat.SpellCritChance, 130);
+                        validations += values.CalculateValidations(Stat.FireDamageSpell, 50);
+                        validations += values.CalculateValidations(Stat.ColdDamageSpell, 50);
+                        validations += values.CalculateValidations(Stat.LightningDamageSpell, 90);
+                        validations += values.CalculateValidations(Stat.CritMult, 30);
+
+                        validations += values.CalculateValidations(Stat.PhysicalDamageMult, 170);
+                        validations += values.CalculateValidations(Stat.PhysicalDamageAdd, 33);
+                        if (gear.GearType == GearType.Dagger) validations += values.CalculateValidations(Stat.AttackSpeed, 20);
+                        if (gear.GearType == GearType.Wand) validations += values.CalculateValidations(Stat.AttackSpeed, 10);
+                        validations += values.CalculateValidations(Stat.CritChance, 30);
+                        validations += values.CalculateValidations(Stat.CritMult, 30);
+                        validations += values.CalculateValidations(Stat.FireDamageAttack, 70);
+                        validations += values.CalculateValidations(Stat.ColdDamageAttack, 70);
+                        validations += values.CalculateValidations(Stat.LightningDamageAttack, 120);
                     }
 
-                    if (gear.GearType == GearType.Belt && (
-                        values.TryGetValue(Stat.Life) >= 60 ||
-                        values.TryGetValue(Stat.Strength) >= 25 ||
-                        values.TryGetValue(Stat.Armor) >= 200 ||
-                        values.TryGetValue(Stat.EnergyShield) >= 35 ||
-                        values.TryGetValue(Stat.Resistance) >= 50 ||
-                        values.TryGetValue(Stat.WeaponElemDamage) >= 25 ||
-                        values.TryGetValue(Stat.FlaskChargesGained) >= 1 ||
-                        values.TryGetValue(Stat.FlaskChargesUsed) >= 1 ||
-                        values.TryGetValue(Stat.FlaskEffectDuration) >= 1 ||
-                        false))
+                    if (gear.GearType == GearType.Staff)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.GemLevel, 2);
+                        validations += values.CalculateValidations(Stat.FireDamageSpell, 70);
+                        validations += values.CalculateValidations(Stat.ColdDamageSpell, 70);
+                        validations += values.CalculateValidations(Stat.LightningDamageSpell, 150);
+                        validations += values.CalculateValidations(Stat.SpellDamage, 160);
                     }
 
-                    if (gear.GearType == GearType.Ring && (
-                        values.TryGetValue(Stat.Life) >= 40 ||
-                        values.TryGetValue(Stat.Strength) >= 40 ||
-                        values.TryGetValue(Stat.PhysicalDamageAdd) >= 8 ||
-                        values.TryGetValue(Stat.WeaponElemDamage) >= 20 ||
-                        values.TryGetValue(Stat.IncreasedRarity) >= 30 ||
-                        values.TryGetValue(Stat.Resistance) >= 60 ||
-                        values.TryGetValue(Stat.ManaRegen) >= 40 ||
-                        values.TryGetValue(Stat.Accuracy) >= 200 ||
-                        values.TryGetValue(Stat.Strength) + values.TryGetValue(Stat.Dexterity) + values.TryGetValue(Stat.Intelligence) >= 60 ||
-                        false))
+                    if (gear.GearType == GearType.Belt)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.Life, 70);
+                        validations += values.CalculateValidations(Stat.Strength, 35);
+                        validations += values.CalculateValidations(Stat.Armor, 280);
+                        validations += values.CalculateValidations(Stat.EnergyShield, 45);
+                        validations += values.CalculateValidations(Stat.Resistance, 70);
+                        validations += values.CalculateValidations(Stat.WeaponElemDamage, 30);
+                        validations += values.CalculateValidations(Stat.FlaskChargesGained, 10);
+                        validations += values.CalculateValidations(Stat.FlaskChargesUsed, 10);
+                        validations += values.CalculateValidations(Stat.FlaskEffectDuration, 10);
                     }
 
-                    if (gear.GearType == GearType.Amulet && (
-                        values.TryGetValue(Stat.Life) >= 40 ||
-                        values.TryGetValue(Stat.PhysicalDamageAdd) >= 8 ||
-                        values.TryGetValue(Stat.WeaponElemDamage) >= 20 ||
-                        values.TryGetValue(Stat.IncreasedRarity) >= 30 ||
-                        values.TryGetValue(Stat.Resistance) >= 60 ||
-                        values.TryGetValue(Stat.ManaRegen) >= 40 ||
-                        values.TryGetValue(Stat.Accuracy) >= 200 ||
-                        values.TryGetValue(Stat.Strength) + values.TryGetValue(Stat.Dexterity) + values.TryGetValue(Stat.Intelligence) >= 60 ||
-                        values.TryGetValue(Stat.CritMult) >= 20 ||
-                        values.TryGetValue(Stat.CritChance) >= 20 ||
-                        values.TryGetValue(Stat.SpellDamage) >= 20 ||
-                        values.TryGetValue(Stat.EnergyShieldMult) >= 10 ||
-                        false))
+                    if (gear.GearType == GearType.Ring)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.Life, 55);
+                        validations += values.CalculateValidations(Stat.Strength, 50);
+                        validations += values.CalculateValidations(Stat.PhysicalDamageAdd, 11);
+                        validations += values.CalculateValidations(Stat.WeaponElemDamage, 30);
+                        validations += values.CalculateValidations(Stat.IncreasedRarity, 40);
+                        validations += values.CalculateValidations(Stat.Resistance, 80);
+                        validations += values.CalculateValidations(Stat.ManaRegen, 50);
+                        validations += values.CalculateValidations(Stat.Accuracy, 250);
+                        validations += values.CalculateValidations(Stat.TotalStats, 75);
                     }
 
-                    if (gear.GearType == GearType.Quiver && (
-                        values.TryGetValue(Stat.Life) >= 50 ||
-                        values.TryGetValue(Stat.WeaponElemDamage) >= 20 ||
-                        values.TryGetValue(Stat.CritMult) >= 20 ||
-                        values.TryGetValue(Stat.CritChance) >= 20 ||
-                        values.TryGetValue(Stat.Resistance) >= 55 ||
-                        false))
+                    if (gear.GearType == GearType.Amulet)
                     {
-                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.Life, 55);
+                        validations += values.CalculateValidations(Stat.PhysicalDamageAdd, 11);
+                        validations += values.CalculateValidations(Stat.WeaponElemDamage, 30);
+                        validations += values.CalculateValidations(Stat.IncreasedRarity, 40);
+                        validations += values.CalculateValidations(Stat.Resistance, 90);
+                        validations += values.CalculateValidations(Stat.ManaRegen, 65);
+                        validations += values.CalculateValidations(Stat.Accuracy, 250);
+                        validations += values.CalculateValidations(Stat.TotalStats, 70);
+                        validations += values.CalculateValidations(Stat.CritMult, 30);
+                        validations += values.CalculateValidations(Stat.CritChance, 30);
+                        validations += values.CalculateValidations(Stat.SpellDamage, 30);
+                        validations += values.CalculateValidations(Stat.EnergyShieldMult, 15);
+                    }
+
+                    if (gear.GearType == GearType.Quiver)
+                    {
+                        seen = true;
+                        validations += values.CalculateValidations(Stat.Life, 75);
+                        validations += values.CalculateValidations(Stat.WeaponElemDamage, 30);
+                        validations += values.CalculateValidations(Stat.CritMult, 30);
+                        validations += values.CalculateValidations(Stat.CritChance, 30);
+                        validations += values.CalculateValidations(Stat.Resistance, 70);
                     }
                     
+                    if (!seen)
+                    {
+                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffffff"));
+                    }
+                    else if (validations >= 3)
+                    {
+                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00ff1d"));
+                    }
+                    else if (validations >= 2)
+                    {
+                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#008080"));
+                    }
+                    else if (validations >= 1)
+                    {
+                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
+                    }
+
                     /*Logger.Log("===");
                     foreach (var pd in parseData)
                     {
@@ -544,6 +584,29 @@ namespace Procurement.Controls
             V result = default(V);
             dict.TryGetValue(key, out result);
             return result;
+        }
+
+        const float adjustment = 1.2f;
+
+        public static float CalculateValidations(this Dictionary<StashControl.Stat, float> dict, StashControl.Stat key1, float value1)
+        {
+            value1 /= adjustment;
+
+            if( dict.TryGetValue(key1) < value1 )
+                return 0;
+            
+            return dict.TryGetValue(key1) / value1;
+        }
+
+        public static float CalculateValidations(this Dictionary<StashControl.Stat, float> dict, StashControl.Stat key1, float value1, StashControl.Stat key2, float value2)
+        {
+            value1 /= adjustment;
+            value2 /= adjustment;
+
+            if( dict.TryGetValue(key1) < value1 || dict.TryGetValue(key2) < value2 )
+                return 0;
+            
+            return (dict.TryGetValue(key1) / value1 + dict.TryGetValue(key2) / value2) / 2;
         }
     }
 }
