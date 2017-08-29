@@ -334,6 +334,16 @@ namespace Procurement.Controls
                     {
                         statlines.AddRange(gear.Explicitmods);
                     }
+
+                    if (gear.CraftedMods != null)
+                    {
+                        statlines.AddRange(gear.CraftedMods);
+                    }
+
+                    if (gear.EnchantMods != null)
+                    {
+                        statlines.AddRange(gear.EnchantMods);
+                    }
                     
                     foreach (var statline in statlines)
                     {
@@ -376,6 +386,17 @@ namespace Procurement.Controls
 
                     float validations = 0;
                     bool seen = false;
+
+                    if (gear.IsLinked(5))
+                    {
+                        ++validations;
+                    }
+
+                    if (gear.IsLinked(6))
+                    {
+                        // sure whatevs
+                        validations += 10;
+                    }
 
                     childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#88001D"));
                     if (gear.GearType == GearType.Chest)
