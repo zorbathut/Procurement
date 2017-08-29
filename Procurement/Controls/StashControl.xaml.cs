@@ -265,11 +265,11 @@ namespace Procurement.Controls
             new ParseData{ stat = Stat.EnergyShield, regex = new Regex(@"\+([0-9]+) to maximum Energy Shield$") },
             new ParseData{ stat = Stat.EnergyShieldMult, regex = new Regex(@"([0-9]+)% increased Energy Shield$") },
             new ParseData{ stat = Stat.Strength, regex = new Regex(@"\+([0-9]+) to Strength$") },
-            new ParseData{ stat = Stat.TotalStats, regex = new Regex(@"\+([0-9]+) to Strength$") },
+            new ParseData{ stat = Stat.Strength, regex = new Regex(@"\+([0-9]+) to All Attributes$") },
             new ParseData{ stat = Stat.Dexterity, regex = new Regex(@"\+([0-9]+) to Dexterity$") },
-            new ParseData{ stat = Stat.TotalStats, regex = new Regex(@"\+([0-9]+) to Dexterity$") },
+            new ParseData{ stat = Stat.Dexterity, regex = new Regex(@"\+([0-9]+) to All Attributes$") },
             new ParseData{ stat = Stat.Intelligence, regex = new Regex(@"\+([0-9]+) to Intelligence$") },
-            new ParseData{ stat = Stat.TotalStats, regex = new Regex(@"\+([0-9]+) to Intelligence$") },
+            new ParseData{ stat = Stat.Intelligence, regex = new Regex(@"\+([0-9]+) to All Attributes$") },
             new ParseData{ stat = Stat.Resistance, regex = new Regex(@"\+([0-9]+)% to Fire Resistance$") },
             new ParseData{ stat = Stat.Resistance, regex = new Regex(@"\+([0-9]+)% to Cold Resistance$") },
             new ParseData{ stat = Stat.Resistance, regex = new Regex(@"\+([0-9]+)% to Lightning Resistance$") },
@@ -371,6 +371,8 @@ namespace Procurement.Controls
                         }
                         values[Stat.Life] += values.TryGetValue(Stat.Strength) / 2;
                     }
+
+                    values[Stat.TotalStats] += values.TryGetValue(Stat.Strength) + values.TryGetValue(Stat.Intelligence) + values.TryGetValue(Stat.Dexterity);
 
                     float validations = 0;
                     bool seen = false;
