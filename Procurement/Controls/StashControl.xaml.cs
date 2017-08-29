@@ -372,7 +372,7 @@ namespace Procurement.Controls
                         values[Stat.Life] += values.TryGetValue(Stat.Strength) / 2;
                     }
 
-                    values[Stat.TotalStats] += values.TryGetValue(Stat.Strength) + values.TryGetValue(Stat.Intelligence) + values.TryGetValue(Stat.Dexterity);
+                    values[Stat.TotalStats] = values.TryGetValue(Stat.Strength) + values.TryGetValue(Stat.Intelligence) + values.TryGetValue(Stat.Dexterity);
 
                     float validations = 0;
                     bool seen = false;
