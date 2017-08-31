@@ -567,6 +567,10 @@ namespace Procurement.Controls
                     {
                         childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffffff"));
                     }
+                    else if (validations >= 4)
+                    {
+                        childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffff20"));
+                    }
                     else if (validations >= 3)
                     {
                         childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00ff1d"));
@@ -615,10 +619,12 @@ namespace Procurement.Controls
         {
             value1 /= adjustment;
 
+            float factor = 1;
+
             if( dict.TryGetValue(key1) < value1 )
-                return 0;
+                factor = 0.5f;
             
-            return dict.TryGetValue(key1) / value1;
+            return factor * dict.TryGetValue(key1) / value1;
         }
 
         public static float CalculateValidations(this Dictionary<StashControl.Stat, float> dict, StashControl.Stat key1, float value1, StashControl.Stat key2, float value2)
@@ -626,10 +632,12 @@ namespace Procurement.Controls
             value1 /= adjustment;
             value2 /= adjustment;
 
+            float factor = 1;
+
             if( dict.TryGetValue(key1) < value1 || dict.TryGetValue(key2) < value2 )
-                return 0;
+                factor = 0.5f;
             
-            return (dict.TryGetValue(key1) / value1 + dict.TryGetValue(key2) / value2) / 2;
+            return factor * (dict.TryGetValue(key1) / value1 + dict.TryGetValue(key2) / value2) / 2;
         }
     }
 }
