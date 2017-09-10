@@ -48,6 +48,35 @@ namespace Procurement.View
             });
         }
 
+        public void RefreshUTabs()
+        {
+            statusController = new StatusController(StatusBox, 140);
+
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+
+            Task task = Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    ApplicationState.Model.StashLoading += model_StashLoading;
+                    ApplicationState.Model.Throttled += model_Throttled;
+                    ApplicationState.Stash[ApplicationState.CurrentLeague].RefreshU(ApplicationState.Model, ApplicationState.CurrentLeague, ApplicationState.AccountName);
+                    ApplicationState.Model.StashLoading -= model_StashLoading;
+                    ApplicationState.Model.Throttled -= model_Throttled;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Exception refreshing all tabs: " + ex.ToString());
+                    MessageBox.Show("Error encountered during refreshing all tabs, error details logged to DebugInfo.log", "Error refreshing all tabs", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    ScreenController.Instance.ReloadStash();
+                }
+            });
+        }
+
         private void model_StashLoading(POEApi.Model.POEModel sender, POEApi.Model.Events.StashLoadedEventArgs e)
         {
             update("Loading " + ApplicationState.CurrentLeague + " Stash Tab " + (e.StashID + 1) + "...", e);
