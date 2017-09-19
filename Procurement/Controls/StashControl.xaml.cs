@@ -567,19 +567,19 @@ namespace Procurement.Controls
                     {
                         childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffffff"));
                     }
-                    else if (validations >= 4)
+                    else if (validations >= 5)
                     {
                         childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffff20"));
                     }
-                    else if (validations >= 3)
+                    else if (validations >= 4)
                     {
                         childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00ff1d"));
                     }
-                    else if (validations >= 2)
+                    else if (validations >= 3)
                     {
                         childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#008080"));
                     }
-                    else if (validations >= 1)
+                    else if (validations >= 2)
                     {
                         childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
                     }
