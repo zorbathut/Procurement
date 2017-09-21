@@ -51,6 +51,7 @@
     <Compile Include="BreachType.cs" />
     <Compile Include="CharacterStashBuilder.cs" />
     <Compile Include="Decoration.cs" />
+    <Compile Include="DivineVessel.cs" />
     <Compile Include="Essence.cs" />
     <Compile Include="EssenceType.cs" />
     <Compile Include="GemHandler.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="JSONProxy\Stash.cs" />
     <Compile Include="Leaguestone.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="Offering.cs" />
     <Compile Include="OrbType.cs" />
     <Compile Include="Events\POEEventArgs.cs" />
     <Compile Include="Events\POEEventState.cs" />
@@ -84,6 +86,8 @@
     <Compile Include="ProxyMapper.cs" />
     <Compile Include="Requirement.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Sextant.cs" />
+    <Compile Include="SextantType.cs" />
     <Compile Include="ShopSetting.cs" />
     <Compile Include="Socket.cs" />
     <Compile Include="Splinter.cs" />

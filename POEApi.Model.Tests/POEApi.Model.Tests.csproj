@@ -44,6 +44,7 @@
       <HintPath>..\packages\Moq.4.5.22\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -77,9 +78,11 @@
     <None Include="TestData\SampleInventory.json" />
     <None Include="TestData\SampleCharacter.json" />
     <None Include="TestData\SampleStash.json" />
+    <None Include="TestData\SampleStashWithDivineVessel.json" />
     <None Include="TestData\SampleStashWithEssences.json" />
     <None Include="TestData\SampleStashWithRelic.json" />
     <None Include="TestData\SampleStashWithRemnantOfCorruption.json" />
+    <None Include="TestData\SampleStashWithLeagueStoneChargeInfo.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\POEApi.Model\POEApi.Model.csproj">

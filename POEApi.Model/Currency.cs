@@ -7,27 +7,13 @@ namespace POEApi.Model
     {
         public Currency(JSONProxy.Item item) : base(item)
         {
+            ItemType = ItemType.Currency;
             Type = ProxyMapper.GetOrbType(item);
             ChaosValue = CurrencyHandler.GetChaosValue(Type);
         }
 
         public OrbType Type { get; }
         public double ChaosValue { get; private set; }
-        
-        protected override int getConcreteHash()
-        {
-            var anonomousType = new
-            {
-                f = IconURL,
-                f2 = Name,
-                f3 = TypeLine,
-                f4 = DescrText,
-                f5 = X,
-                f6 = Y,
-                f7 = InventoryId
-            };
-
-            return anonomousType.GetHashCode();
-        }
+       
     }
 }
