@@ -221,6 +221,7 @@ namespace Procurement.Controls
         public enum Stat
         {
             Life,
+            Mana,
             EnergyShield,
             EnergyShieldMult,
             Strength,
@@ -263,6 +264,7 @@ namespace Procurement.Controls
 
         static ParseData[] parseData = new ParseData[] {
             new ParseData{ stat = Stat.Life, regex = new Regex(@"\+([0-9]+) to maximum Life$") },
+            new ParseData{ stat = Stat.Mana, regex = new Regex(@"\+([0-9]+) to maximum Mana$") },
             new ParseData{ stat = Stat.EnergyShield, regex = new Regex(@"\+([0-9]+) to maximum Energy Shield$") },
             new ParseData{ stat = Stat.EnergyShieldMult, regex = new Regex(@"([0-9]+)% increased Energy Shield$") },
             new ParseData{ stat = Stat.Strength, regex = new Regex(@"\+([0-9]+) to Strength$") },
@@ -404,6 +406,7 @@ namespace Procurement.Controls
                     {
                         seen = true;
                         validations += values.CalculateValidations(Stat.Life, 75);
+                        validations += values.CalculateValidations(Stat.Mana, 40);
                         validations += values.CalculateValidations(Stat.EnergyShield, 575);
                         validations += values.CalculateValidations(Stat.EnergyShield, 350, Stat.Life, 65);
                         validations += values.CalculateValidations(Stat.Strength, 40);
@@ -415,6 +418,7 @@ namespace Procurement.Controls
                     {
                         seen = true;
                         validations += values.CalculateValidations(Stat.Life, 65);
+                        validations += values.CalculateValidations(Stat.Mana, 40);
                         validations += values.CalculateValidations(Stat.EnergyShield, 300);
                         validations += values.CalculateValidations(Stat.EnergyShield, 200, Stat.Life, 55);
                         validations += values.CalculateValidations(Stat.Accuracy, 300);
@@ -427,6 +431,7 @@ namespace Procurement.Controls
                         seen = true;
                         validations += values.CalculateValidations(Stat.MovementSpeed, 20);
                         validations += values.CalculateValidations(Stat.Life, 65);
+                        validations += values.CalculateValidations(Stat.Mana, 40);
                         validations += values.CalculateValidations(Stat.EnergyShield, 130);
                         validations += values.CalculateValidations(Stat.EnergyShield, 90, Stat.Life, 55);
                         validations += values.CalculateValidations(Stat.Strength, 40);
@@ -438,6 +443,7 @@ namespace Procurement.Controls
                     {
                         seen = true;
                         validations += values.CalculateValidations(Stat.Life, 65);
+                        validations += values.CalculateValidations(Stat.Mana, 40);
                         validations += values.CalculateValidations(Stat.EnergyShield, 150);
                         validations += values.CalculateValidations(Stat.EnergyShield, 100, Stat.Life, 55);
                         validations += values.CalculateValidations(Stat.Resistance, 80);
@@ -450,6 +456,7 @@ namespace Procurement.Controls
                     {
                         seen = true;
                         validations += values.CalculateValidations(Stat.Life, 80);
+                        validations += values.CalculateValidations(Stat.Mana, 40);
                         validations += values.CalculateValidations(Stat.EnergyShield, 350);
                         validations += values.CalculateValidations(Stat.EnergyShield, 280, Stat.Life, 70);
                         validations += values.CalculateValidations(Stat.Resistance, 100);
@@ -513,6 +520,7 @@ namespace Procurement.Controls
                     {
                         seen = true;
                         validations += values.CalculateValidations(Stat.Life, 70);
+                        validations += values.CalculateValidations(Stat.Mana, 40);
                         validations += values.CalculateValidations(Stat.Strength, 35);
                         validations += values.CalculateValidations(Stat.Armor, 280);
                         validations += values.CalculateValidations(Stat.EnergyShield, 45);
@@ -527,6 +535,7 @@ namespace Procurement.Controls
                     {
                         seen = true;
                         validations += values.CalculateValidations(Stat.Life, 55);
+                        validations += values.CalculateValidations(Stat.Mana, 40);
                         validations += values.CalculateValidations(Stat.Strength, 50);
                         validations += values.CalculateValidations(Stat.PhysicalDamageAdd, 11);
                         validations += values.CalculateValidations(Stat.WeaponElemDamage, 30);
@@ -541,6 +550,7 @@ namespace Procurement.Controls
                     {
                         seen = true;
                         validations += values.CalculateValidations(Stat.Life, 55);
+                        validations += values.CalculateValidations(Stat.Mana, 40);
                         validations += values.CalculateValidations(Stat.PhysicalDamageAdd, 11);
                         validations += values.CalculateValidations(Stat.WeaponElemDamage, 30);
                         validations += values.CalculateValidations(Stat.IncreasedRarity, 40);
@@ -558,6 +568,7 @@ namespace Procurement.Controls
                     {
                         seen = true;
                         validations += values.CalculateValidations(Stat.Life, 75);
+                        validations += values.CalculateValidations(Stat.Mana, 40);
                         validations += values.CalculateValidations(Stat.WeaponElemDamage, 30);
                         validations += values.CalculateValidations(Stat.CritMult, 30);
                         validations += values.CalculateValidations(Stat.CritChance, 30);
