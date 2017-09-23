@@ -595,12 +595,6 @@ namespace Procurement.Controls
                     {
                         childGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#21007F"));
                     }
-
-                    /*Logger.Log("===");
-                    foreach (var pd in parseData)
-                    {
-                        Logger.Log(string.Format("{0}: {1}", pd.parses, pd.stat));
-                    }*/
                 }
             }
 
